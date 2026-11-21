@@ -10,6 +10,10 @@ Independent historical Turing (sm_75) NInfer CUDA/C++ experimentation on two 22 
 
 The snapshots preserve the original source states as independently reviewable branches; they are not chronological releases and have a fresh sanitized publication history.
 
+## Live upstream comparison (2026-11-21)
+
+See the [same-hardware Qwen3.8/Bonsai 2 single- and dual-GPU benchmark report](research/benchmarks/2026-11-21-live-sm75-comparison.md) for measured performance, MTP round costs, exact long-context retrieval and limitations.
+
 ## Performance evidence and caveats
 
 | Historical experiment | Recorded useful tokens/s |
