@@ -1,0 +1,16 @@
+{
+  "snapshot_date": "2026-11-21",
+  "original_branch": "perf/sm75-int8-tu102",
+  "source_head": "7046bb90894839ec0344554ebc205f3d85e9da80",
+  "tracked": 1010,
+  "untracked_source": 0,
+  "published_code_paths": 1006,
+  "notes": 23,
+  "sanitized_paths": [
+    "examples/cli/messages/long_niah_128k.json",
+    "examples/cli/messages/long_niah_256k.json",
+    "examples/cli/messages/long_niah_64k.json",
+    "progress.md",
+    "third_party/cpp-httplib/httplib.h"
+  ]
+}

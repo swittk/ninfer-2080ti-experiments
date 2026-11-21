@@ -1,0 +1,134 @@
+#include "ops/gdn_input_proj/q4_q5/q5_a8_sm75.h"
+#include "core/device.h"
+#include "ninfer/ops/linear.h"
+#include "ops/common/mma.cuh"
+#include <cuda_bf16.h>
+#include <cuda_fp16.h>
+#include <cstdint>
+#include <stdexcept>
+namespace ninfer::ops::detail { namespace {
+constexpr int kK=5120,kGroups=80,kQkRows=4096,kValueRows=6144,kParentRows=12288,kQkvRows=10240;
+constexpr int kRowsPerBlock=16,kWarps=2,kThreads=64,kRowBlocks=kParentRows/kRowsPerBlock;
+constexpr int kLowRowBytes=kGroups*32,kHighRowBytes=kGroups*8;
+constexpr int kLowBlockBytes=kRowsPerBlock*kLowRowBytes,kHighBlockBytes=kRowsPerBlock*kHighRowBytes;
+constexpr int kScratchBlockBytes=kLowBlockBytes+kHighBlockBytes,kTransformCtas=64;
+constexpr std::size_t kScratchBytes=(std::size_t)kTransformCtas*kScratchBlockBytes;
+__device__ __forceinline__ std::uint32_t expand_q5(std::uint16_t low,std::uint32_t hi4){const std::uint32_t x=(std::uint32_t)low;const std::uint32_t lo=__byte_perm(x&0x0f0fu,(x>>4)&0x0f0fu,0x5140);const std::uint32_t m=((hi4&1u)<<4)|((hi4&2u)<<11)|((hi4&4u)<<18)|((hi4&8u)<<25);return lo|(m*15u);}
+__device__ __forceinline__ std::uint32_t canonical_hi4(const std::uint8_t* high,int row,int group,int k0){const auto*p=high+(row*kGroups+group)*8+(k0>>3);return ((*p)>>(k0&7))&15u;}
+template<int Tokens> __global__ void quantize_a8(const __nv_bfloat16*x,std::int8_t*q,__half*s){int warp=(int)threadIdx.x>>5,lane=(int)threadIdx.x&31,u=(int)blockIdx.x*8+warp;if(u>=Tokens*kGroups)return;int t=u/kGroups,g=u-t*kGroups,d0=g*64+lane,d1=d0+32;float x0=__bfloat162float(x[(std::int64_t)t*kK+d0]),x1=__bfloat162float(x[(std::int64_t)t*kK+d1]),m=fmaxf(fabsf(x0),fabsf(x1));for(int o=16;o;o>>=1)m=fmaxf(m,__shfl_xor_sync(0xffffffffu,m,o));float sc=m?m/127.f:0.f,iv=sc?1.f/sc:0.f;int a=__float2int_rn(x0*iv),b=__float2int_rn(x1*iv);a=max(-127,min(127,a));b=max(-127,min(127,b));q[(std::int64_t)t*kK+d0]=(std::int8_t)a;q[(std::int64_t)t*kK+d1]=(std::int8_t)b;if(lane==0)s[t*kGroups+g]=__float2half_rn(sc);}
+__global__ void pack_qk(const __nv_bfloat16*src,__nv_bfloat16*qkv,int tokens){int i=(int)blockIdx.x*blockDim.x+threadIdx.x,n=kQkRows*tokens;if(i<n){int t=i/kQkRows,r=i-t*kQkRows;qkv[(std::int64_t)t*kQkvRows+r]=src[i];}}
+template<int Tokens> __global__ void q5_value_z_a8(const std::uint8_t*lo,const std::uint8_t*hi,const std::uint8_t*scale_bytes,const std::int8_t*aq,const __half*as,__nv_bfloat16*qkv,__nv_bfloat16*z){int lane=(int)threadIdx.x&31,warp=(int)threadIdx.x>>5,rb=(int)blockIdx.x*kWarps+warp,rowbase=rb*16,gid=lane>>2,lid=lane&3;float f0=0,f1=0,f2=0,f3=0;uint4 p=*reinterpret_cast<const uint4*>(lo+(((std::int64_t)rb*kGroups)*32+lane)*16);std::uint32_t h=*reinterpret_cast<const std::uint32_t*>(hi+(((std::int64_t)rb*kGroups)*32+lane)*4);
+#pragma unroll 1
+for(int g=0;g<kGroups;++g){uint4 pn{};std::uint32_t hn=0;if(g+1<kGroups){pn=*reinterpret_cast<const uint4*>(lo+(((std::int64_t)rb*kGroups+g+1)*32+lane)*16);hn=*reinterpret_cast<const std::uint32_t*>(hi+(((std::int64_t)rb*kGroups+g+1)*32+lane)*4);}int c0=0,c1=0,c2=0,c3=0,tok=lane>>2,q=lane&3;unsigned b0=0,b1=0;if(tok<Tokens){const auto*ab=reinterpret_cast<const std::uint32_t*>(aq+(std::int64_t)tok*kK+g*64);b0=ab[q];b1=ab[4+q];}mma_s8(c0,c1,c2,c3,expand_q5((std::uint16_t)p.x,h),expand_q5((std::uint16_t)(p.x>>16),h>>4),expand_q5((std::uint16_t)p.y,h>>8),expand_q5((std::uint16_t)(p.y>>16),h>>12),b0,b1);if(tok<Tokens){const auto*ab=reinterpret_cast<const std::uint32_t*>(aq+(std::int64_t)tok*kK+g*64+32);b0=ab[q];b1=ab[4+q];}else b0=b1=0;mma_s8(c0,c1,c2,c3,expand_q5((std::uint16_t)p.z,h>>16),expand_q5((std::uint16_t)(p.z>>16),h>>20),expand_q5((std::uint16_t)p.w,h>>24),expand_q5((std::uint16_t)(p.w>>16),h>>28),b0,b1);int ca=2*lid,cb=ca+1,r0=rowbase+gid,r1=r0+8;float w0=0,w1=0;if(lid==0){const auto*ss=reinterpret_cast<const std::uint16_t*>(scale_bytes);const std::int64_t si=((std::int64_t)rb*kGroups+g)*kRowsPerBlock;w0=__half2float(__ushort_as_half(ss[si+gid]));w1=__half2float(__ushort_as_half(ss[si+8+gid]));}w0=__shfl_sync(0xffffffffu,w0,gid*4);w1=__shfl_sync(0xffffffffu,w1,gid*4);float s0=0,s1=0;if(gid==0){s0=ca<Tokens?__half2float(as[ca*kGroups+g]):0;s1=cb<Tokens?__half2float(as[cb*kGroups+g]):0;}s0=__shfl_sync(0xffffffffu,s0,lid);s1=__shfl_sync(0xffffffffu,s1,lid);f0=__fmaf_rn((float)c0,w0*s0,f0);f1=__fmaf_rn((float)c1,w0*s1,f1);f2=__fmaf_rn((float)c2,w1*s0,f2);f3=__fmaf_rn((float)c3,w1*s1,f3);p=pn;h=hn;}int ca=2*lid,cb=ca+1,r0=rowbase+gid,r1=r0+8;if(ca<Tokens){if(r0<kValueRows)qkv[(std::int64_t)ca*kQkvRows+kQkRows+r0]=__float2bfloat16_rn(f0);else z[(std::int64_t)ca*kValueRows+r0-kValueRows]=__float2bfloat16_rn(f0);if(r1<kValueRows)qkv[(std::int64_t)ca*kQkvRows+kQkRows+r1]=__float2bfloat16_rn(f2);else z[(std::int64_t)ca*kValueRows+r1-kValueRows]=__float2bfloat16_rn(f2);}if(cb<Tokens){if(r0<kValueRows)qkv[(std::int64_t)cb*kQkvRows+kQkRows+r0]=__float2bfloat16_rn(f1);else z[(std::int64_t)cb*kValueRows+r0-kValueRows]=__float2bfloat16_rn(f1);if(r1<kValueRows)qkv[(std::int64_t)cb*kQkvRows+kQkRows+r1]=__float2bfloat16_rn(f3);else z[(std::int64_t)cb*kValueRows+r1-kValueRows]=__float2bfloat16_rn(f3);}}
+
+// T4 producer/consumer specialization: one warp stages each activation group once while four
+// consumer warps process independent 16-row weight blocks. The producer overlaps the next group
+// load with current-group IMMA work; a single CTA barrier advances the double buffer.
+template<int Tokens>
+__launch_bounds__(160, 4) __global__ void q5_value_z_a8_pc4(
+    const std::uint8_t*lo,const std::uint8_t*hi,const std::uint8_t*scale_bytes,
+    const std::int8_t*aq,const __half*as,__nv_bfloat16*qkv,__nv_bfloat16*z){
+    static_assert(Tokens==4);
+    constexpr int kConsumers=4;
+    constexpr int kActivationStride=72; // 64 bytes plus 8: disjoint banks across token quartets.
+    __shared__ __align__(16) std::int8_t sh_a[2][Tokens][kActivationStride];
+    __shared__ __align__(16) __half sh_s[2][Tokens];
+    const int lane=(int)threadIdx.x&31,warp=(int)threadIdx.x>>5;
+    const bool producer=warp==0;
+    const int consumer=warp-1;
+    const int rb=(int)blockIdx.x*kConsumers+consumer;
+    const int rowbase=rb*16,gid=lane>>2,lid=lane&3;
+    auto stage_group=[&](int buffer,int group){
+        if(!producer)return;
+        const int byte=lane*8;
+        const int token=byte>>6;
+        const int offset=byte&63;
+        const auto*src=reinterpret_cast<const uint2*>(
+            aq+(std::int64_t)token*kK+group*64+offset);
+        auto*dst=reinterpret_cast<uint2*>(&sh_a[buffer][token][offset]);
+        *dst=*src;
+        if(lane<Tokens)sh_s[buffer][lane]=as[lane*kGroups+group];
+    };
+    uint4 p{};std::uint32_t h=0;
+    float f0=0,f1=0,f2=0,f3=0;
+    if(!producer){
+        p=*reinterpret_cast<const uint4*>(lo+(((std::int64_t)rb*kGroups)*32+lane)*16);
+        h=*reinterpret_cast<const std::uint32_t*>(hi+(((std::int64_t)rb*kGroups)*32+lane)*4);
+    }
+    stage_group(0,0);
+    __syncthreads();
+#pragma unroll 1
+    for(int g=0;g<kGroups;++g){
+        const int buffer=g&1;
+        if(producer){
+            if(g+1<kGroups)stage_group(buffer^1,g+1);
+        }else{
+            uint4 pn{};std::uint32_t hn=0;
+            if(g+1<kGroups){
+                pn=*reinterpret_cast<const uint4*>(lo+(((std::int64_t)rb*kGroups+g+1)*32+lane)*16);
+                hn=*reinterpret_cast<const std::uint32_t*>(hi+(((std::int64_t)rb*kGroups+g+1)*32+lane)*4);
+            }
+            int c0=0,c1=0,c2=0,c3=0;
+            const int tok=lane>>2,q=lane&3;
+            unsigned b0=0,b1=0;
+            if(tok<Tokens){
+                const auto*ab=reinterpret_cast<const std::uint32_t*>(&sh_a[buffer][tok][0]);
+                b0=ab[q];b1=ab[4+q];
+            }
+            mma_s8(c0,c1,c2,c3,expand_q5((std::uint16_t)p.x,h),
+                   expand_q5((std::uint16_t)(p.x>>16),h>>4),expand_q5((std::uint16_t)p.y,h>>8),
+                   expand_q5((std::uint16_t)(p.y>>16),h>>12),b0,b1);
+            if(tok<Tokens){
+                const auto*ab=reinterpret_cast<const std::uint32_t*>(&sh_a[buffer][tok][32]);
+                b0=ab[q];b1=ab[4+q];
+            }else b0=b1=0;
+            mma_s8(c0,c1,c2,c3,expand_q5((std::uint16_t)p.z,h>>16),
+                   expand_q5((std::uint16_t)(p.z>>16),h>>20),expand_q5((std::uint16_t)p.w,h>>24),
+                   expand_q5((std::uint16_t)(p.w>>16),h>>28),b0,b1);
+            const int ca=2*lid,cb=ca+1,r0=rowbase+gid,r1=r0+8;
+            float w0=0,w1=0;
+            if(lid==0){
+                const auto*ss=reinterpret_cast<const std::uint16_t*>(scale_bytes);
+                const std::int64_t si=((std::int64_t)rb*kGroups+g)*kRowsPerBlock;
+                w0=__half2float(__ushort_as_half(ss[si+gid]));
+                w1=__half2float(__ushort_as_half(ss[si+8+gid]));
+            }
+            w0=__shfl_sync(0xffffffffu,w0,gid*4);
+            w1=__shfl_sync(0xffffffffu,w1,gid*4);
+            float s0=0,s1=0;
+            if(gid==0){
+                s0=ca<Tokens?__half2float(sh_s[buffer][ca]):0;
+                s1=cb<Tokens?__half2float(sh_s[buffer][cb]):0;
+            }
+            s0=__shfl_sync(0xffffffffu,s0,lid);
+            s1=__shfl_sync(0xffffffffu,s1,lid);
+            f0=__fmaf_rn((float)c0,w0*s0,f0);f1=__fmaf_rn((float)c1,w0*s1,f1);
+            f2=__fmaf_rn((float)c2,w1*s0,f2);f3=__fmaf_rn((float)c3,w1*s1,f3);
+            p=pn;h=hn;
+        }
+        __syncthreads();
+    }
+    if(producer)return;
+    const int ca=2*lid,cb=ca+1,r0=rowbase+gid,r1=r0+8;
+    if(ca<Tokens){
+        if(r0<kValueRows)qkv[(std::int64_t)ca*kQkvRows+kQkRows+r0]=__float2bfloat16_rn(f0);
+        else z[(std::int64_t)ca*kValueRows+r0-kValueRows]=__float2bfloat16_rn(f0);
+        if(r1<kValueRows)qkv[(std::int64_t)ca*kQkvRows+kQkRows+r1]=__float2bfloat16_rn(f2);
+        else z[(std::int64_t)ca*kValueRows+r1-kValueRows]=__float2bfloat16_rn(f2);
+    }
+    if(cb<Tokens){
+        if(r0<kValueRows)qkv[(std::int64_t)cb*kQkvRows+kQkRows+r0]=__float2bfloat16_rn(f1);
+        else z[(std::int64_t)cb*kValueRows+r0-kValueRows]=__float2bfloat16_rn(f1);
+        if(r1<kValueRows)qkv[(std::int64_t)cb*kQkvRows+kQkRows+r1]=__float2bfloat16_rn(f3);
+        else z[(std::int64_t)cb*kValueRows+r1-kValueRows]=__float2bfloat16_rn(f3);
+    }
+}
+
+template<bool ToFragment> __global__ void transform_kernel(std::uint8_t*low,std::uint8_t*high,std::uint8_t*scales,std::uint8_t*scratch){std::uint8_t*tmp=scratch+(std::size_t)blockIdx.x*kScratchBlockBytes;std::uint8_t*lt=tmp;std::uint8_t*ht=tmp+kLowBlockBytes;for(int rb=(int)blockIdx.x;rb<kRowBlocks;rb+=gridDim.x){std::uint8_t*lb=low+(std::size_t)rb*kLowBlockBytes;std::uint8_t*hb=high+(std::size_t)rb*kHighBlockBytes;for(int v=(int)threadIdx.x;v<kLowBlockBytes/16;v+=blockDim.x)reinterpret_cast<uint4*>(lt)[v]=reinterpret_cast<const uint4*>(lb)[v];for(int v=(int)threadIdx.x;v<kHighBlockBytes/16;v+=blockDim.x)reinterpret_cast<uint4*>(ht)[v]=reinterpret_cast<const uint4*>(hb)[v];__syncthreads();if constexpr(ToFragment){for(int item=(int)threadIdx.x;item<kGroups*32;item+=blockDim.x){int g=item>>5,lane=item&31,r=lane>>2,q=lane&3,r0=r,r1=r+8;auto*d16=reinterpret_cast<std::uint16_t*>(lb+(std::size_t)item*16);std::uint32_t hp=0;for(int hh=0;hh<2;++hh){int bo=hh*16+q*2,k0=hh*32+q*4;const auto*l0=lt+(r0*kGroups+g)*32;const auto*l1=lt+(r1*kGroups+g)*32;d16[hh*4]=*reinterpret_cast<const std::uint16_t*>(l0+bo);d16[hh*4+1]=*reinterpret_cast<const std::uint16_t*>(l1+bo);d16[hh*4+2]=*reinterpret_cast<const std::uint16_t*>(l0+bo+8);d16[hh*4+3]=*reinterpret_cast<const std::uint16_t*>(l1+bo+8);hp|=canonical_hi4(ht,r0,g,k0)<<((hh*4)*4);hp|=canonical_hi4(ht,r1,g,k0)<<((hh*4+1)*4);hp|=canonical_hi4(ht,r0,g,k0+16)<<((hh*4+2)*4);hp|=canonical_hi4(ht,r1,g,k0+16)<<((hh*4+3)*4);}*reinterpret_cast<std::uint32_t*>(hb+(std::size_t)item*4)=hp;}}else{const int low_pairs=kRowsPerBlock*kGroups*16;for(int item=(int)threadIdx.x;item<low_pairs;item+=blockDim.x){int row=item/(kGroups*16),rem=item-row*kGroups*16,g=rem/16,cp=rem-g*16,q=cp&3,quarter=cp>>2,lane=4*(row&7)+q;const auto*src=reinterpret_cast<const std::uint16_t*>(lt+(std::size_t)(g*32+lane)*16);*reinterpret_cast<std::uint16_t*>(lb+(row*kGroups+g)*32+cp*2)=src[quarter*2+(row>=8?1:0)];}const int high_bytes=kRowsPerBlock*kGroups*8;for(int item=(int)threadIdx.x;item<high_bytes;item+=blockDim.x){int row=item/(kGroups*8),rem=item-row*kGroups*8,g=rem/8,byte=rem-g*8,seg=byte>>1,pair=byte&1,q0=2*pair,l0=4*(row&7)+q0,l1=l0+1,shift=seg*8+(row>=8?4:0);std::uint32_t h0=*reinterpret_cast<const std::uint32_t*>(ht+(std::size_t)(g*32+l0)*4);std::uint32_t h1=*reinterpret_cast<const std::uint32_t*>(ht+(std::size_t)(g*32+l1)*4);hb[(row*kGroups+g)*8+byte]=(std::uint8_t)(((h0>>shift)&15u)|(((h1>>shift)&15u)<<4));}}__syncthreads();auto*sb=reinterpret_cast<std::uint16_t*>(scales)+(std::size_t)rb*kRowsPerBlock*kGroups;auto*st=reinterpret_cast<std::uint16_t*>(lt);constexpr int se=kRowsPerBlock*kGroups;for(int i=(int)threadIdx.x;i<se;i+=blockDim.x)st[i]=sb[i];__syncthreads();for(int i=(int)threadIdx.x;i<se;i+=blockDim.x){if constexpr(ToFragment){int row=i/kGroups,gg=i-row*kGroups;sb[gg*kRowsPerBlock+row]=st[i];}else{int row=i/kGroups,gg=i-row*kGroups;sb[i]=st[gg*kRowsPerBlock+row];}}__syncthreads();}}
+template<int Tokens> void launch_tokens(const Tensor&x,const Weight&qk,const Weight&vz,Tensor&qkv,Tensor&z,WorkspaceArena&ws,cudaStream_t stream){auto scope=ws.scope();Tensor qtmp=ws.alloc(DType::BF16,{kQkRows,Tokens});Tensor aq=ws.alloc(DType::I8,{kK,Tokens});Tensor as=ws.alloc(DType::FP16,{kGroups,Tokens});ops::linear(x,qk,qtmp,stream);pack_qk<<<(kQkRows*Tokens+255)/256,256,0,stream>>>(static_cast<const __nv_bfloat16*>(qtmp.data),static_cast<__nv_bfloat16*>(qkv.data),Tokens);quantize_a8<Tokens><<<(Tokens*kGroups+7)/8,256,0,stream>>>(static_cast<const __nv_bfloat16*>(x.data),static_cast<std::int8_t*>(aq.data),static_cast<__half*>(as.data));q5_value_z_a8<Tokens><<<kParentRows/(16*kWarps),kThreads,0,stream>>>(static_cast<const std::uint8_t*>(vz.qdata),static_cast<const std::uint8_t*>(vz.qhigh),static_cast<const std::uint8_t*>(vz.scales),static_cast<const std::int8_t*>(aq.data),static_cast<const __half*>(as.data),static_cast<__nv_bfloat16*>(qkv.data),static_cast<__nv_bfloat16*>(z.data));CUDA_CHECK(cudaGetLastError());}
+} // namespace
+std::size_t gdn_q5_sm75_a8_workspace_bytes(std::int32_t tokens){if(tokens<1||tokens>8)return 0;return (std::size_t)(kQkRows*2+kK+kGroups*2)*tokens;}
+void gdn_q5_sm75_a8_launch(const Tensor&x,const Weight&qk,const Weight&vz,Tensor&qkv,Tensor&z,WorkspaceArena&ws,cudaStream_t stream){if(vz.layout!=QuantLayout::RowSplitSm75Fragment||vz.n!=kParentRows||vz.k!=kK||qk.qtype!=QType::Q4G64_F16S||qk.layout!=QuantLayout::RowSplit)throw std::invalid_argument("SM75 GDN Q5 A8 requires canonical Q4 qk and fragment Q5 value/z");switch(x.ne[1]){case 1:launch_tokens<1>(x,qk,vz,qkv,z,ws,stream);return;case 2:launch_tokens<2>(x,qk,vz,qkv,z,ws,stream);return;case 3:launch_tokens<3>(x,qk,vz,qkv,z,ws,stream);return;case 4:{auto scope=ws.scope();Tensor qtmp=ws.alloc(DType::BF16,{kQkRows,4});Tensor aq=ws.alloc(DType::I8,{kK,4});Tensor as=ws.alloc(DType::FP16,{kGroups,4});ops::linear(x,qk,qtmp,stream);pack_qk<<<(kQkRows*4+255)/256,256,0,stream>>>(static_cast<const __nv_bfloat16*>(qtmp.data),static_cast<__nv_bfloat16*>(qkv.data),4);quantize_a8<4><<<(4*kGroups+7)/8,256,0,stream>>>(static_cast<const __nv_bfloat16*>(x.data),static_cast<std::int8_t*>(aq.data),static_cast<__half*>(as.data));q5_value_z_a8_pc4<4><<<kRowBlocks/4,160,0,stream>>>(static_cast<const std::uint8_t*>(vz.qdata),static_cast<const std::uint8_t*>(vz.qhigh),static_cast<const std::uint8_t*>(vz.scales),static_cast<const std::int8_t*>(aq.data),static_cast<const __half*>(as.data),static_cast<__nv_bfloat16*>(qkv.data),static_cast<__nv_bfloat16*>(z.data));CUDA_CHECK(cudaGetLastError());return;}case 5:launch_tokens<5>(x,qk,vz,qkv,z,ws,stream);return;case 6:launch_tokens<6>(x,qk,vz,qkv,z,ws,stream);return;case 7:launch_tokens<7>(x,qk,vz,qkv,z,ws,stream);return;case 8:launch_tokens<8>(x,qk,vz,qkv,z,ws,stream);return;default:throw std::invalid_argument("SM75 GDN Q5 A8 requires T1..T8");}}
+std::size_t gdn_q5_sm75_transform_scratch_bytes() noexcept{return kScratchBytes;}
+void gdn_q5_sm75_transform_layout(Weight&w,QuantLayout target,void*scratch,cudaStream_t stream){if(w.qtype!=QType::Q5G64_F16S||w.n!=kParentRows||w.k!=kK||!w.qdata||!w.qhigh||!scratch||(target!=QuantLayout::RowSplit&&target!=QuantLayout::RowSplitSm75Fragment))throw std::invalid_argument("SM75 GDN Q5 transform invalid args");if(w.layout==target)return;if(w.layout!=QuantLayout::RowSplit&&w.layout!=QuantLayout::RowSplitSm75Fragment)throw std::invalid_argument("SM75 GDN Q5 transform bad source layout");auto*lo=const_cast<std::uint8_t*>(static_cast<const std::uint8_t*>(w.qdata));auto*hi=const_cast<std::uint8_t*>(static_cast<const std::uint8_t*>(w.qhigh));auto*sc=const_cast<std::uint8_t*>(static_cast<const std::uint8_t*>(w.scales));auto*tmp=static_cast<std::uint8_t*>(scratch);if(!sc)throw std::invalid_argument("SM75 GDN Q5 transform requires scales");if(target==QuantLayout::RowSplitSm75Fragment)transform_kernel<true><<<kTransformCtas,256,0,stream>>>(lo,hi,sc,tmp);else transform_kernel<false><<<kTransformCtas,256,0,stream>>>(lo,hi,sc,tmp);CUDA_CHECK(cudaGetLastError());w.layout=target;}
+} // namespace ninfer::ops::detail
