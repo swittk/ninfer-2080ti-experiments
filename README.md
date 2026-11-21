@@ -14,6 +14,8 @@ The snapshots preserve the original source states as independently reviewable br
 
 See the [same-hardware Qwen3.8/Bonsai 2 single- and dual-GPU benchmark report](research/benchmarks/2026-11-21-live-sm75-comparison.md) for measured performance, MTP round costs, exact long-context retrieval and limitations.
 
+See also the [first SM75-to-NInfer-all kernel port screen](research/benchmarks/2026-11-21-first-upstream-port-rejected.md), which was rejected after direct GPU timings showed it was slower than NInfer-all's existing Q5 route.
+
 ## Performance evidence and caveats
 
 | Historical experiment | Recorded useful tokens/s |
