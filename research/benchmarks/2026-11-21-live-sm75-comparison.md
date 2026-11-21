@@ -63,13 +63,37 @@ Each completed run used 64,581 actual prompt tokens, zero prefix reuse, and 128 
 
 **Old single-card long path:** on this configuration the October binary failed during Q4 layout initialization with `cudaErrorGraphExecUpdateFailure` at `src/ops/linear_swiglu/q4/q4_linear_swiglu_a8_sm75.cu:457`. It is a failed configuration, not a zero-throughput result.
 
+## Follow-up: genuinely populated ~262K context (2026-11-21)
+
+The initial short/64K campaign preceded this follow-up. These completed tests use the **same 260,165-token document**, zero prefix-cache reuse, 128 generated tokens, MTP with three drafts and INT8 KV. Both use a context ceiling of 262,144 tokens.
+
+Original local fixture SHA-256: `218eef66b4d569055296627e1a9cfd0ff281e515453462f8317617c6be7d3fab`. The source text is derived from the original private 256K NIAH fixture, with an appended request for two hidden facts; the answer values were not given in the appended request. Replaying the exact original bytes requires that local corpus.
+
+| Metric | Bonsai 2, single 22 GB SM75 GPU | Original Qwen3.8, two-card SM75 pipeline |
+|---|---:|---:|
+| Actual populated prompt tokens | 260,165 | 260,165 |
+| Prefill throughput | **354.2 tok/s** | 306.3 tok/s |
+| Prefill duration | 12m 14.4s | 14m 9.3s |
+| Decode throughput | **35.5 tok/s** | 21.5 tok/s |
+| Decode duration | 3.6s | 5.9s |
+| Generated tokens | 128 | 128 |
+| Drafts accepted / attempted | 70 / 168 (41.7%) | 68 / 173 (39.3%) |
+| Hidden relay code / status color | ORCHID=493817; COLOR=COBALT | ORCHID=493817; COLOR=COBALT |
+| Output SHA-256 | `0a7cbdda1662dadd104e286859839dc0815fef864cc9f01a08c3c18a7b174ba7` | `358d71cc15ea77c2c719c70a8ec144564d5e1c0f0950429f656aeaa24ed333d1` |
+
+Both runs completed without CUDA errors and recovered both hidden facts correctly. GPU 1 still hosted the pre-existing REIMS workload during the Qwen PP2 run. Neither GPU was reset or had its stock clocks/power settings changed. The models differ: Bonsai is a trained ternary derivative with a Bonsai-specific speculative head; the Qwen artifact was mechanically converted from the original Qwen weights. Two-fact retrieval is not a complete quality qualification.
+
+The earlier statement in this report that no new populated 262K benchmark was performed applied only to the **initial** campaign. This follow-up adds Bonsai single-GPU and original-Qwen upstream PP2 results. Our historical experimental fast Q64 and strict dual paths were **not re-benchmarked at 262K**, so their archived 104.53 and 56.67 tok/s results are not directly comparable to these new cases.
+
+**Practical observation:** for this fully populated long-document request, Bonsai on one modified 2080 Ti achieved better prefill latency and useful decode throughput than original Qwen3.8 split across two such cards; that reflects both model differences and engine execution differences, not a lossless Qwen speedup.
+
 ## Conclusions and next research gates
 
 1. The maintained NInfer-all engine already provides working two-card pipeline and tensor parallelism; no reason to port generic dual-device infrastructure wholesale.
 2. On the same original dense Qwen weights, upstream is faster without MTP but our historical MTP-enabled single-GPU path is much faster across the three short prompts. Profile complete round costs and the small-width verifier/proposer/target-head operations in controlled matched-output tests before attributing a specific mechanism or filing a performance issue.
 3. For these PCIe-only Turing cards, pipeline parallelism is a better long-context deployment choice. The official NInfer-all T2 tensor share path is a focused potential optimization target only if verified with operator timings and end-to-end gain.
 4. Ternary Bonsai 2 gives a much faster **different-model** option, including successful 64K retrieval on one 2080 Ti; still validate multilingual output and model task quality separately.
-5. A new genuinely populated 262K-token comparison was **not** run in this campaign. The historical Q64 ~104.53 tok/s 262K receipt has repetitive output despite its automated quality pass; the later October ~56.67 tok/s 260K strict configuration is a separate workload/implementation. Neither is superseded or directly validated by the new 64K runs.
+5. At the time of the initial short/64K campaign, a new populated 262K comparison had **not** been performed; the follow-up above now adds upstream Bonsai-single and Qwen-PP2 results, but not fresh measurements of our historical dual paths. The historical Q64 ~104.53 tok/s 262K receipt has repetitive output despite its automated quality pass; the later October ~56.67 tok/s 260K strict configuration is a separate workload/implementation. Neither is superseded or directly validated by the new 64K runs.
 6. Single-run rates may shift with GPU boost and the concurrent REIMS workload; repeat matched fixtures with clocks/telemetry logged before publishing any upstream optimization claim.
 
 Provenance: historical code and archived investigation notes: [swittk/ninfer-2080ti-experiments](https://github.com/swittk/ninfer-2080ti-experiments). Maintained project: [iamwavecut/ninfer-all](https://github.com/iamwavecut/ninfer-all). Its documented two-GPU implementation and limitations: [pipeline stages and tensor parallelism](https://github.com/iamwavecut/ninfer-all/blob/master/docs/maintainer/pipeline-stages.md). No external issue or PR was filed in this benchmarking campaign.
