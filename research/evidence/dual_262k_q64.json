@@ -1,0 +1,127 @@
+{
+  "source_local_relative": ".chatgpt/post_reboot_20260821/p0_q64_retained_local_splits/recert262_f8/result.json",
+  "source_sha256": "d1ae61bbd6f2376c0ac6a5b973da1ebd4850a9233756d91085e8e4dc4c069e87",
+  "redactions": "raw prompt, output, and personal identifiers omitted",
+  "receipt": {
+    "generated_utc": "2026-08-29T05:51:05.804225+00:00",
+    "rows": [
+      {
+        "run": "r0",
+        "tps": 104.53,
+        "rounds": 48,
+        "drafted": 191,
+        "accepted": 188,
+        "by_pos": "47,47,47,47",
+        "target0": "1.001 s",
+        "target1": "0.866 s",
+        "proposal": "0.298 s",
+        "packet": "0.367 s",
+        "helper": "0.151 s",
+        "digest": "8c857a8c13f7fd19",
+        "hash": "4dc55beb490b08360bf297c5e350d14d7b8bc0fc5477118c3c4032cab3831805",
+        "clock0": 1860.0,
+        "clock1": 1350.0,
+        "quality": {
+          "words": 169,
+          "sentences": 11,
+          "headings": 3,
+          "topics": 8,
+          "coverage": {
+            "prefill_decode": true,
+            "memory_bandwidth": true,
+            "tensor_quant": true,
+            "kv_cache": true,
+            "speculative": true,
+            "long_context": true,
+            "reproducibility": true,
+            "correctness": true,
+            "failure": false
+          },
+          "trigram_diversity": 0.8083832335329342,
+          "control": false,
+          "pass": true
+        }
+      },
+      {
+        "run": "r1",
+        "tps": 104.46,
+        "rounds": 48,
+        "drafted": 191,
+        "accepted": 188,
+        "by_pos": "47,47,47,47",
+        "target0": "1.002 s",
+        "target1": "0.866 s",
+        "proposal": "0.298 s",
+        "packet": "0.369 s",
+        "helper": "0.151 s",
+        "digest": "8c857a8c13f7fd19",
+        "hash": "4dc55beb490b08360bf297c5e350d14d7b8bc0fc5477118c3c4032cab3831805",
+        "clock0": 1845.0,
+        "clock1": 1350.0,
+        "quality": {
+          "words": 169,
+          "sentences": 11,
+          "headings": 3,
+          "topics": 8,
+          "coverage": {
+            "prefill_decode": true,
+            "memory_bandwidth": true,
+            "tensor_quant": true,
+            "kv_cache": true,
+            "speculative": true,
+            "long_context": true,
+            "reproducibility": true,
+            "correctness": true,
+            "failure": false
+          },
+          "trigram_diversity": 0.8083832335329342,
+          "control": false,
+          "pass": true
+        }
+      },
+      {
+        "run": "r2",
+        "tps": 104.57,
+        "rounds": 48,
+        "drafted": 191,
+        "accepted": 188,
+        "by_pos": "47,47,47,47",
+        "target0": "1.002 s",
+        "target1": "0.865 s",
+        "proposal": "0.298 s",
+        "packet": "0.369 s",
+        "helper": "0.150 s",
+        "digest": "8c857a8c13f7fd19",
+        "hash": "4dc55beb490b08360bf297c5e350d14d7b8bc0fc5477118c3c4032cab3831805",
+        "clock0": 1845.0,
+        "clock1": 1350.0,
+        "quality": {
+          "words": 169,
+          "sentences": 11,
+          "headings": 3,
+          "topics": 8,
+          "coverage": {
+            "prefill_decode": true,
+            "memory_bandwidth": true,
+            "tensor_quant": true,
+            "kv_cache": true,
+            "speculative": true,
+            "long_context": true,
+            "reproducibility": true,
+            "correctness": true,
+            "failure": false
+          },
+          "trigram_diversity": 0.8083832335329342,
+          "control": false,
+          "pass": true
+        }
+      }
+    ],
+    "median_tps": 104.53,
+    "min_tps": 104.46,
+    "max_tps": 104.57,
+    "deterministic": true,
+    "quality_pass": true,
+    "classification": "ACCEPT_262K100"
+  }
+}

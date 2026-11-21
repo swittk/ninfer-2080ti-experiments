@@ -1,0 +1,203 @@
+{
+  "source_local_relative": ".chatgpt/post_reboot_20260821/p0_q4_single_delta7_p0m_recert/final_result.json",
+  "source_sha256": "579a0cc85dab5f1dd06d5b0c85a34c85ce98d2552f8e407442a5946cbae547ad",
+  "redactions": "raw prompt, output, and personal identifiers omitted",
+  "receipt": {
+    "generated_utc": "2026-08-28T06:49:31.652295+00:00",
+    "classification": "SINGLE100_PASS",
+    "selected_uuid": "GPU-2fffc240-5d58-fbc8-27d6-6b349448fda9",
+    "fixed_endpoint": {
+      "output_tokens": 128,
+      "runs": [
+        {
+          "run": "r0",
+          "rc": 0,
+          "tps": 107.45,
+          "digest": "ef4dc9c008396373",
+          "rounds": 33,
+          "drafted": 99,
+          "accepted": 94,
+          "by_pos": "33,32,29",
+          "hash": "c4ce5202b2da31202231a4936322f971356195ad4b313e17545d9af5ff362756",
+          "clock_median": 1860.0,
+          "power_max": 253.5,
+          "temp_max": 62.0,
+          "quality": {
+            "words": 80,
+            "keywords": 4,
+            "diversity": 1.0,
+            "control": false,
+            "pass": false
+          }
+        },
+        {
+          "run": "r1",
+          "rc": 0,
+          "tps": 107.33,
+          "digest": "ef4dc9c008396373",
+          "rounds": 33,
+          "drafted": 99,
+          "accepted": 94,
+          "by_pos": "33,32,29",
+          "hash": "c4ce5202b2da31202231a4936322f971356195ad4b313e17545d9af5ff362756",
+          "clock_median": 1845.0,
+          "power_max": 251.63,
+          "temp_max": 64.0,
+          "quality": {
+            "words": 80,
+            "keywords": 4,
+            "diversity": 1.0,
+            "control": false,
+            "pass": false
+          }
+        },
+        {
+          "run": "r2",
+          "rc": 0,
+          "tps": 107.21,
+          "digest": "ef4dc9c008396373",
+          "rounds": 33,
+          "drafted": 99,
+          "accepted": 94,
+          "by_pos": "33,32,29",
+          "hash": "c4ce5202b2da31202231a4936322f971356195ad4b313e17545d9af5ff362756",
+          "clock_median": 1845.0,
+          "power_max": 248.39,
+          "temp_max": 65.0,
+          "quality": {
+            "words": 80,
+            "keywords": 4,
+            "diversity": 1.0,
+            "control": false,
+            "pass": false
+          }
+        },
+        {
+          "run": "r3",
+          "rc": 0,
+          "tps": 107.12,
+          "digest": "ef4dc9c008396373",
+          "rounds": 33,
+          "drafted": 99,
+          "accepted": 94,
+          "by_pos": "33,32,29",
+          "hash": "c4ce5202b2da31202231a4936322f971356195ad4b313e17545d9af5ff362756",
+          "clock_median": 1845.0,
+          "power_max": 249.13,
+          "temp_max": 67.0,
+          "quality": {
+            "words": 80,
+            "keywords": 4,
+            "diversity": 1.0,
+            "control": false,
+            "pass": false
+          }
+        }
+      ],
+      "median_tps": 107.27,
+      "mean_tps": 107.2775,
+      "min_tps": 107.12,
+      "max_tps": 107.45,
+      "deterministic": true
+    },
+    "extended_fixed": {
+      "rc": 0,
+      "tps": 107.55,
+      "digest": "c2e7319e3353a9bd",
+      "rounds": 66,
+      "drafted": 198,
+      "accepted": 189,
+      "by_pos": "65,64,60",
+      "hash": "3e64299767e3ea0923af3fa8b7b64af49a388cf2849354821eb1d7d4c10e7cdf",
+      "quality": {
+        "words": 139,
+        "sections": 1,
+        "coverage": {
+          "cuda_memory": true,
+          "quantized_inference": false,
+          "speculative_decode": false
+        },
+        "diversity": 1.0,
+        "control": false,
+        "pass": false
+      }
+    },
+    "six_family": {
+      "all_deterministic": true,
+      "all_quality_pass": true,
+      "mean_family_median_tps": 94.89083333333333,
+      "min_family_median_tps": 72.68,
+      "families": {
+        "general": {
+          "median_tps": 107.555,
+          "deterministic": true,
+          "quality_pass": true,
+          "digest": "c2e7319e3353a9bd",
+          "rounds": 66,
+          "drafted": 198,
+          "accepted": 189,
+          "by_pos": "65,64,60"
+        },
+        "code": {
+          "median_tps": 107.27000000000001,
+          "deterministic": true,
+          "quality_pass": true,
+          "digest": "d56390fbf328384b",
+          "rounds": 66,
+          "drafted": 198,
+          "accepted": 189,
+          "by_pos": "64,63,62"
+        },
+        "json": {
+          "median_tps": 103.9,
+          "deterministic": true,
+          "quality_pass": true,
+          "digest": "4ff76b5a9c5b9236",
+          "rounds": 67,
+          "drafted": 201,
+          "accepted": 187,
+          "by_pos": "67,62,58"
+        },
+        "thai": {
+          "median_tps": 72.68,
+          "deterministic": true,
+          "quality_pass": true,
+          "digest": "574be0d3eabe8054",
+          "rounds": 97,
+          "drafted": 290,
+          "accepted": 158,
+          "by_pos": "70,51,37"
+        },
+        "japanese": {
+          "median_tps": 89.045,
+          "deterministic": true,
+          "quality_pass": true,
+          "digest": "1f0ee73067da8693",
+          "rounds": 79,
+          "drafted": 235,
+          "accepted": 176,
+          "by_pos": "73,56,47"
+        },
+        "arabic": {
+          "median_tps": 88.895,
+          "deterministic": true,
+          "quality_pass": true,
+          "digest": "0ca360122c3dfb02",
+          "rounds": 78,
+          "drafted": 234,
+          "accepted": 176,
+          "by_pos": "76,58,42"
+        }
+      }
+    },
+    "route": {
+      "artifact": ".chatgpt/continuation_1605_20260821/p0_m_int4mtp_q5resident/native_q4g64_msefine_artifact/qwen3_8_27b_mtp_q4g64_msefine.ninfer",
+      "mtp_q4g64": true,
+      "mtp_marlin_q4": true,
+      "loose_logit_delta": 7,
+      "draft_tokens": 3,
+      "kv_dtype": "int8",
+      "stock_gpu": true
+    }
+  }
+}

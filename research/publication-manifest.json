@@ -1,0 +1,33 @@
+{
+  "capture_date": "2026-11-21",
+  "root_source": "historical dual GPU worktree",
+  "base_commit": "1697ed3b7134d3419918e2ea824401f79ee15515",
+  "tracked_paths": 1034,
+  "new_source_paths": 151,
+  "copied_paths": 1181,
+  "excluded_paths_count": 4,
+  "sanitized_paths_count": 4,
+  "sanitized_paths": [
+    "examples/cli/messages/long_niah_128k.json",
+    "examples/cli/messages/long_niah_256k.json",
+    "examples/cli/messages/long_niah_64k.json",
+    "progress.md"
+  ],
+  "historical_notes_count": 69,
+  "selected_receipts": [
+    "strict_79",
+    "single80_185",
+    "margin7_107",
+    "dual_short_65k",
+    "dual_262k_q64",
+    "c8_batch"
+  ],
+  "selected_reports": [
+    "2026-10-02-query-preparation",
+    "2026-10-02-dflash2-screen",
+    "2026-10-02-query-finish",
+    "2026-10-02-tp2-fused-input",
+    "2026-10-02-two-thread-rejection"
+  ],
+  "raw_logs": "not published; retained in ignored original worktree"
+}

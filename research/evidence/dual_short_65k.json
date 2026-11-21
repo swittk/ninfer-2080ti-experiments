@@ -1,0 +1,97 @@
+{
+  "source_local_relative": ".chatgpt/post_reboot_20260821/p0_q64_retained_local_splits/final_text_matrix/result.json",
+  "source_sha256": "018b6d846af6f6fc03b1c1c6ed2f5b9a47590dabf25741fe8083d01dd9a16060",
+  "redactions": "raw prompt, output, and personal identifiers omitted",
+  "receipt": {
+    "generated_utc": "2026-08-29T05:58:33.110197+00:00",
+    "groups": {
+      "65k": {
+        "rows": [
+          {
+            "run": "r0",
+            "tps": 110.91,
+            "rounds": 26,
+            "drafted": 103,
+            "accepted": 100,
+            "by_pos": "25,25,25,25",
+            "digest": "3272b8632ba80c7c",
+            "hash": "7897940904d7f8a794d342d613821e90873b38401ad9c9d13b4cc51baca36b76"
+          },
+          {
+            "run": "r1",
+            "tps": 110.94,
+            "rounds": 26,
+            "drafted": 103,
+            "accepted": 100,
+            "by_pos": "25,25,25,25",
+            "digest": "3272b8632ba80c7c",
+            "hash": "7897940904d7f8a794d342d613821e90873b38401ad9c9d13b4cc51baca36b76"
+          },
+          {
+            "run": "r2",
+            "tps": 110.96,
+            "rounds": 26,
+            "drafted": 103,
+            "accepted": 100,
+            "by_pos": "25,25,25,25",
+            "digest": "3272b8632ba80c7c",
+            "hash": "7897940904d7f8a794d342d613821e90873b38401ad9c9d13b4cc51baca36b76"
+          }
+        ],
+        "median_tps": 110.94,
+        "min_tps": 110.91,
+        "deterministic": true,
+        "passes100": true
+      },
+      "short": {
+        "rows": [
+          {
+            "run": "r0",
+            "tps": 106.0,
+            "rounds": 67,
+            "drafted": 201,
+            "accepted": 187,
+            "by_pos": "66,64,57",
+            "digest": "c0da3fc3538bfc73",
+            "hash": "19f363073b03154848b3d52dc0b3a66b603ff84848fb9d6fa4284f5d7cfb5cf5"
+          },
+          {
+            "run": "r1",
+            "tps": 106.01,
+            "rounds": 67,
+            "drafted": 201,
+            "accepted": 187,
+            "by_pos": "66,64,57",
+            "digest": "c0da3fc3538bfc73",
+            "hash": "19f363073b03154848b3d52dc0b3a66b603ff84848fb9d6fa4284f5d7cfb5cf5"
+          },
+          {
+            "run": "r2",
+            "tps": 106.1,
+            "rounds": 67,
+            "drafted": 201,
+            "accepted": 187,
+            "by_pos": "66,64,57",
+            "digest": "c0da3fc3538bfc73",
+            "hash": "19f363073b03154848b3d52dc0b3a66b603ff84848fb9d6fa4284f5d7cfb5cf5"
+          },
+          {
+            "run": "r3",
+            "tps": 106.01,
+            "rounds": 67,
+            "drafted": 201,
+            "accepted": 187,
+            "by_pos": "66,64,57",
+            "digest": "c0da3fc3538bfc73",
+            "hash": "19f363073b03154848b3d52dc0b3a66b603ff84848fb9d6fa4284f5d7cfb5cf5"
+          }
+        ],
+        "median_tps": 106.01,
+        "min_tps": 106.0,
+        "deterministic": true,
+        "passes100": true
+      }
+    },
+    "classification": "ACCEPT_TEXT_65K_SHORT"
+  }
+}

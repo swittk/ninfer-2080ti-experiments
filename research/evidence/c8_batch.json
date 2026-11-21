@@ -1,0 +1,138 @@
+{
+  "source_local_relative": ".chatgpt/production_serve_20260908/decode_architecture/q5_matrix_dual_1/result.json",
+  "source_sha256": "d5108a5bcbdce54d0499cbf34b3d49b0fc2e586bcb5cf1d101c6ec81f0bba549",
+  "redactions": "raw prompt, output, and personal identifiers omitted",
+  "receipt": {
+    "classification": "MEASURED_NOT_CERTIFIED",
+    "server_exit_code": 0,
+    "phases": [
+      {
+        "classification": "MEASURED_NOT_CERTIFIED",
+        "requests": 8,
+        "completed": 8,
+        "errors": 0,
+        "cancelled": 0,
+        "length_limited": 8,
+        "makespan_seconds": 4.209297715002322,
+        "completion_tokens": 256,
+        "physical_end_to_end_tps": 60.81774617357014,
+        "all_request_visible_overlap_seconds": 0.1924988380051218,
+        "ttft_p50_seconds": 1.3982471499984968,
+        "ttft_p95_seconds": 3.2968938859994523,
+        "ttft_max_seconds": 3.2968938859994523,
+        "minimum_visible_decode_tps_conservative": 8.838145370271587,
+        "maximum_inter_chunk_gap_seconds": 0.9667733649985166,
+        "jain_visible_decode_fairness": 0.7779758544027358,
+        "phase": "cold",
+        "workload_kind": "cold",
+        "common_c8_stream_window": {
+          "qualified_measurement": false,
+          "reason": "insufficient common 8-request overlap",
+          "seconds": 0.1924988380051218
+        }
+      },
+      {
+        "classification": "MEASURED_NOT_CERTIFIED",
+        "requests": 8,
+        "completed": 8,
+        "errors": 0,
+        "cancelled": 0,
+        "length_limited": 6,
+        "makespan_seconds": 34.50836105000053,
+        "completion_tokens": 7659,
+        "physical_end_to_end_tps": 221.946211496471,
+        "all_request_visible_overlap_seconds": 20.943361969999387,
+        "ttft_p50_seconds": 0.36644329800037667,
+        "ttft_p95_seconds": 0.7810302110010525,
+        "ttft_max_seconds": 0.7810302110010525,
+        "minimum_visible_decode_tps_conservative": 30.247590933196793,
+        "maximum_inter_chunk_gap_seconds": 0.21531933100050082,
+        "jain_visible_decode_fairness": 0.9963576008773009,
+        "phase": "warm",
+        "workload_kind": "warm",
+        "common_c8_stream_window": {
+          "qualified_measurement": true,
+          "streams": 8,
+          "streams_per_gpu": 4,
+          "replicas": 2,
+          "common_start_monotonic": 64069.239608024,
+          "common_end_monotonic": 64090.182969994,
+          "seconds": 20.943361969999387,
+          "conservative_boundary_allowance_per_request": 4,
+          "physical_c4_c4": true,
+          "aggregate_tokens_per_second": 271.159902986682,
+          "minimum_tokens_per_second": 28.887434637602155,
+          "rows": [
+            {
+              "seed": 960100,
+              "device": 0,
+              "tokens_before": 7,
+              "tokens_after": 668,
+              "conservative_tokens": 657,
+              "tokens_per_second": 31.370321581660523
+            },
+            {
+              "seed": 960101,
+              "device": 0,
+              "tokens_before": 3,
+              "tokens_after": 775,
+              "conservative_tokens": 768,
+              "tokens_per_second": 36.67033025070819
+            },
+            {
+              "seed": 960102,
+              "device": 0,
+              "tokens_before": 9,
+              "tokens_after": 754,
+              "conservative_tokens": 741,
+              "tokens_per_second": 35.38113895283173
+            },
+            {
+              "seed": 960103,
+              "device": 0,
+              "tokens_before": 5,
+              "tokens_after": 787,
+              "conservative_tokens": 778,
+              "tokens_per_second": 37.147808509180955
+            },
+            {
+              "seed": 960104,
+              "device": 1,
+              "tokens_before": 1,
+              "tokens_after": 610,
+              "conservative_tokens": 605,
+              "tokens_per_second": 28.887434637602155
+            },
+            {
+              "seed": 960105,
+              "device": 1,
+              "tokens_before": 2,
+              "tokens_after": 716,
+              "conservative_tokens": 710,
+              "tokens_per_second": 33.900956351566165
+            },
+            {
+              "seed": 960106,
+              "device": 1,
+              "tokens_before": 5,
+              "tokens_after": 714,
+              "conservative_tokens": 705,
+              "tokens_per_second": 33.66221722232979
+            },
+            {
+              "seed": 960107,
+              "device": 1,
+              "tokens_before": 7,
+              "tokens_after": 726,
+              "conservative_tokens": 715,
+              "tokens_per_second": 34.139695480802544
+            }
+          ],
+          "jain_fairness": 0.9943681116409027,
+          "numeric_decode_gate_met": true,
+          "semantic_quality_certified": false
+        }
+      }
+    ]
+  }
+}

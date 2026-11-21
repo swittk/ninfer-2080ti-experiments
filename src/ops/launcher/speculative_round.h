@@ -1,0 +1,38 @@
+#pragma once
+
+#include "core/tensor.h"
+#include "ninfer/ops/sampling.h"
+
+#include <cuda_runtime.h>
+
+namespace ninfer::ops::detail {
+
+void speculative_prepare_verify_inputs_launch(const Tensor& anchors, const Tensor& drafts,
+                                              const Tensor& base_positions,
+                                              const Tensor& current_extents, Tensor& verify_ids,
+                                              Tensor& positions, cudaStream_t stream);
+void speculative_prepare_verify_ids_launch(const Tensor& anchors, const Tensor& drafts,
+                                           const Tensor& current_extents, Tensor& verify_ids,
+                                           cudaStream_t stream);
+
+void speculative_accept_greedy_drafts_launch(const Tensor& target_tokens, const Tensor& logits,
+                                             const Tensor& drafts, const Tensor& current_extents,
+                                             Tensor& lengths, Tensor& anchors,
+                                             Tensor& licensed_tokens, Tensor& licensed_counts,
+                                             Tensor& accepted, std::int32_t token_domain,
+                                             const SamplingConfig* configs, DeviceSpan workspace,
+                                             cudaStream_t stream, float greedy_margin_delta,
+                                             bool margin_full_logits, bool margin_mandatory_score);
+
+void speculative_accept_all_greedy_drafts_launch(
+    const Tensor& target_tokens, const Tensor& drafts, const Tensor& current_extents,
+    Tensor& lengths, Tensor& anchors, Tensor& licensed_tokens, Tensor& licensed_counts,
+    Tensor& accepted, cudaStream_t stream);
+
+void speculative_select_accepted_hidden_launch(const Tensor& hidden, const Tensor& selectors,
+                                               Tensor& out, cudaStream_t stream);
+
+void proposal_remap_token_ids_launch(Tensor& proposal_tokens, const std::int32_t* id_map,
+                                     std::int32_t n, cudaStream_t stream);
+
+} // namespace ninfer::ops::detail

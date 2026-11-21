@@ -1,0 +1,216 @@
+{
+  "source_local_relative": ".chatgpt/post_reboot_20260821/p0_bf_indexed_rerank/promoted_recert/result.json",
+  "source_sha256": "8828dccf81516970f78482c7b004462c6c50aaa53b696ca03afe2b3db1a5c1e0",
+  "redactions": "raw prompt, output, and personal identifiers omitted",
+  "receipt": {
+    "generated_utc": "2026-08-22T13:34:36.627881+00:00",
+    "source_head": "1697ed3b7134d3419918e2ea824401f79ee15515",
+    "calibration": {
+      "rows": [
+        {
+          "slot": 0,
+          "tps": 80.81,
+          "clock_median_mhz": 1875.0,
+          "rc": 0
+        },
+        {
+          "slot": 1,
+          "tps": 74.43,
+          "clock_median_mhz": 1350.0,
+          "rc": 0
+        }
+      ],
+      "selected": {
+        "slot": 0,
+        "tps": 80.81,
+        "clock_median_mhz": 1875.0,
+        "rc": 0
+      }
+    },
+    "rows": [
+      {
+        "rep": 0,
+        "rc": 0,
+        "tps": 80.48,
+        "digest": "14660c413b4cf185",
+        "rounds": "43",
+        "fallback": "1",
+        "drafted": "129",
+        "accepted": "83",
+        "by_pos": "35,27,21",
+        "hash": "c43e654e31b07d9b7f6693be30524e2f07ce502785274e121dccede99edefd39",
+        "clock_median_mhz": 1845.0,
+        "temp_max_c": 66.0
+      },
+      {
+        "rep": 1,
+        "rc": 0,
+        "tps": 80.34,
+        "digest": "14660c413b4cf185",
+        "rounds": "43",
+        "fallback": "1",
+        "drafted": "129",
+        "accepted": "83",
+        "by_pos": "35,27,21",
+        "hash": "c43e654e31b07d9b7f6693be30524e2f07ce502785274e121dccede99edefd39",
+        "clock_median_mhz": 1845.0,
+        "temp_max_c": 67.0
+      },
+      {
+        "rep": 10,
+        "rc": 0,
+        "tps": 79.91,
+        "digest": "14660c413b4cf185",
+        "rounds": "43",
+        "fallback": "1",
+        "drafted": "129",
+        "accepted": "83",
+        "by_pos": "35,27,21",
+        "hash": "c43e654e31b07d9b7f6693be30524e2f07ce502785274e121dccede99edefd39",
+        "clock_median_mhz": 1830.0,
+        "temp_max_c": 74.0
+      },
+      {
+        "rep": 11,
+        "rc": 0,
+        "tps": 79.84,
+        "digest": "14660c413b4cf185",
+        "rounds": "43",
+        "fallback": "1",
+        "drafted": "129",
+        "accepted": "83",
+        "by_pos": "35,27,21",
+        "hash": "c43e654e31b07d9b7f6693be30524e2f07ce502785274e121dccede99edefd39",
+        "clock_median_mhz": 1830.0,
+        "temp_max_c": 74.0
+      },
+      {
+        "rep": 2,
+        "rc": 0,
+        "tps": 80.33,
+        "digest": "14660c413b4cf185",
+        "rounds": "43",
+        "fallback": "1",
+        "drafted": "129",
+        "accepted": "83",
+        "by_pos": "35,27,21",
+        "hash": "c43e654e31b07d9b7f6693be30524e2f07ce502785274e121dccede99edefd39",
+        "clock_median_mhz": 1830.0,
+        "temp_max_c": 68.0
+      },
+      {
+        "rep": 3,
+        "rc": 0,
+        "tps": 80.3,
+        "digest": "14660c413b4cf185",
+        "rounds": "43",
+        "fallback": "1",
+        "drafted": "129",
+        "accepted": "83",
+        "by_pos": "35,27,21",
+        "hash": "c43e654e31b07d9b7f6693be30524e2f07ce502785274e121dccede99edefd39",
+        "clock_median_mhz": 1830.0,
+        "temp_max_c": 69.0
+      },
+      {
+        "rep": 4,
+        "rc": 0,
+        "tps": 80.25,
+        "digest": "14660c413b4cf185",
+        "rounds": "43",
+        "fallback": "1",
+        "drafted": "129",
+        "accepted": "83",
+        "by_pos": "35,27,21",
+        "hash": "c43e654e31b07d9b7f6693be30524e2f07ce502785274e121dccede99edefd39",
+        "clock_median_mhz": 1830.0,
+        "temp_max_c": 70.0
+      },
+      {
+        "rep": 5,
+        "rc": 0,
+        "tps": 80.22,
+        "digest": "14660c413b4cf185",
+        "rounds": "43",
+        "fallback": "1",
+        "drafted": "129",
+        "accepted": "83",
+        "by_pos": "35,27,21",
+        "hash": "c43e654e31b07d9b7f6693be30524e2f07ce502785274e121dccede99edefd39",
+        "clock_median_mhz": 1830.0,
+        "temp_max_c": 71.0
+      },
+      {
+        "rep": 6,
+        "rc": 0,
+        "tps": 80.15,
+        "digest": "14660c413b4cf185",
+        "rounds": "43",
+        "fallback": "1",
+        "drafted": "129",
+        "accepted": "83",
+        "by_pos": "35,27,21",
+        "hash": "c43e654e31b07d9b7f6693be30524e2f07ce502785274e121dccede99edefd39",
+        "clock_median_mhz": 1830.0,
+        "temp_max_c": 71.0
+      },
+      {
+        "rep": 7,
+        "rc": 0,
+        "tps": 80.05,
+        "digest": "14660c413b4cf185",
+        "rounds": "43",
+        "fallback": "1",
+        "drafted": "129",
+        "accepted": "83",
+        "by_pos": "35,27,21",
+        "hash": "c43e654e31b07d9b7f6693be30524e2f07ce502785274e121dccede99edefd39",
+        "clock_median_mhz": 1830.0,
+        "temp_max_c": 72.0
+      },
+      {
+        "rep": 8,
+        "rc": 0,
+        "tps": 80.05,
+        "digest": "14660c413b4cf185",
+        "rounds": "43",
+        "fallback": "1",
+        "drafted": "129",
+        "accepted": "83",
+        "by_pos": "35,27,21",
+        "hash": "c43e654e31b07d9b7f6693be30524e2f07ce502785274e121dccede99edefd39",
+        "clock_median_mhz": 1830.0,
+        "temp_max_c": 73.0
+      },
+      {
+        "rep": 9,
+        "rc": 0,
+        "tps": 79.92,
+        "digest": "14660c413b4cf185",
+        "rounds": "43",
+        "fallback": "1",
+        "drafted": "129",
+        "accepted": "83",
+        "by_pos": "35,27,21",
+        "hash": "c43e654e31b07d9b7f6693be30524e2f07ce502785274e121dccede99edefd39",
+        "clock_median_mhz": 1830.0,
+        "temp_max_c": 73.0
+      }
+    ],
+    "median_tps": 80.185,
+    "mean_tps": 80.15333333333334,
+    "min_tps": 79.84,
+    "max_tps": 80.48,
+    "deterministic": true,
+    "passes_single80": true,
+    "classification": "CERTIFIED_SINGLE80",
+    "source_files": {
+      "proposal": "src/ops/linear/q4/q4_proposal_b2_sm75.cu",
+      "target": "src/ops/linear/w8/w8_vocab_w4_a8_sm75.cu"
+    },
+    "source_sha256": {
+      "proposal": "a85caa453bab1917915c97f24ebee4ce7b3a65f2293b0de9ee18c7e490be2613",
+      "target": "f05cc55628133d716cc8ce6085bd550e4951ed059d396c339e05bd4631f6de85"
+    }
+  }
+}

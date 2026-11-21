@@ -1,0 +1,437 @@
+{
+  "schema": 3,
+  "rule": "Accepted historical profiles are cumulative, but owner C1 gate credit is strict-only. C1 topology is D3. Margin/relaxed policies remain preserved evidence and may never satisfy the owner strict C1 performance gate. Matching-fixture evidence is required before crediting a new frontier; language soup or comparable semantic drift is a hard quality failure regardless of speed.",
+  "canonical_c1": {
+    "draft_tokens": 3,
+    "greedy_margin_delta": -1.0,
+    "proposal_head": "optimized",
+    "acceptance_policy": "strict",
+    "minimum_useful_tps": 100.0,
+    "strict_current_p0m_reference_tps": 79.01,
+    "current_source_strict_fixture_tps": 80.51,
+    "legacy_certified_single80_tps": 80.185,
+    "retained_mtp_packed_prefix": true,
+    "gate_status": "OPEN_BELOW_100"
+  },
+  "main_serving": {
+    "physical_gpus": 2,
+    "clients_per_gpu": 4,
+    "draft_tokens": 1,
+    "minimum_per_user_tps": 20,
+    "minimum_aggregate_tps": 160,
+    "topology": "physical C4+D1 per GPU x2",
+    "latest_same_source_measured_aggregate_tps": 259.4168778526735,
+    "latest_same_source_measured_min_per_user_tps": 30.12422477943713,
+    "best_q5_measured_aggregate_tps": 271.159902986682,
+    "best_q5_measured_min_per_user_tps": 28.887434637602155
+  },
+  "profiles": [
+    {
+      "id": "c1_strict_p0m79",
+      "title": "Owner strict/current P0M C1 reference",
+      "must_preserve": true,
+      "historical_reference": {
+        "baseline_median_tps": 76.35,
+        "candidate_median_tps": 79.01,
+        "same_output_as_baseline": true,
+        "candidate_deterministic": true
+      },
+      "evidence": ".chatgpt/post_reboot_20260821/p0_au_p0m_recert/final_current/result.json",
+      "evidence_sha256": "44032166d254282199a0cd85e28d9c0c624d00581d83ec7f46feffda415d5c26",
+      "status": "retained original79.01 headline; rebuilt-current matching128 fixture preserves exact output/counts at80.51; not relabelled as distinct historicalSINGLE80",
+      "policy_relation": "strict margin=-1, D3, historical --lm-head-draft route",
+      "additional_evidence": [
+        {
+          "path": ".chatgpt/production_serve_20260908/retained_c1/completion_0600/strict_fixture_result.json",
+          "sha256": "a6fb289901fc5dc16e77186adfaca303de973fe41319ed056df66d7c42e196b8"
+        },
+        {
+          "path": ".chatgpt/production_serve_20260908/retained_c1/completion_0600/strict_and_margin_warmup.log",
+          "sha256": "a22da59dc64d538e72dca051ef0ca225bb8cf3db42dc04f6754e6f05554c36a9"
+        }
+      ],
+      "current_source_witness": ".chatgpt/production_serve_20260908/retained_c1/completion_0600/strict_fixture_result.json",
+      "gate_relation": "strict lineage/reference; eligible for owner C1 gate only when matching strict useful throughput reaches >=100 and quality passes",
+      "gate_credit": true,
+      "gate_met": false
+    },
+    {
+      "id": "c1_exact80",
+      "title": "Legacy distinct certified SINGLE80 indexed-rerank route",
+      "must_preserve": true,
+      "historical_reference": {
+        "median_tps": 80.185
+      },
+      "evidence": ".chatgpt/post_reboot_20260821/p0_bf_indexed_rerank/promoted_recert/result.json",
+      "evidence_sha256": "8828dccf81516970f78482c7b004462c6c50aaa53b696ca03afe2b3db1a5c1e0",
+      "status": "retained certified evidence; distinct from owner current-P0M strict79 headline",
+      "policy_relation": "legacy certified single route; do not relabel as current strict P0M",
+      "gate_relation": "strict lineage/reference; eligible for owner C1 gate only when matching strict useful throughput reaches >=100 and quality passes",
+      "gate_credit": true,
+      "gate_met": false
+    },
+    {
+      "id": "c1_d3_margin7",
+      "title": "Retained relaxed C1 D3 margin7 — non-gating",
+      "must_preserve": true,
+      "historical_reference": {
+        "accepted_reference_tps": 107.27
+      },
+      "evidence": ".chatgpt/post_reboot_20260821/p0_q4_single_delta7_p0m_recert/final_result.json",
+      "evidence_sha256": "579a0cc85dab5f1dd06d5b0c85a34c85ce98d2552f8e407442a5946cbae547ad",
+      "status": "preserved/rebuilt current path around107-108 on qualified short/general workloads; NON-GATING after severe same-prompt long-Thai language soup vs clean strict control",
+      "current_source_witness": ".chatgpt/production_serve_20260908/retained_c1/exact_packed_result.json",
+      "additional_evidence": [
+        {
+          "path": ".chatgpt/production_serve_20260908/retained_c1/exact_packed_result.json",
+          "sha256": "906ece25f4dccdd005ba7b6135dde51d29102e54f3f9f89277ceba386a01a07a"
+        },
+        {
+          "path": ".chatgpt/production_serve_20260908/retained_c1/http_exact_reconciliation.json",
+          "sha256": "5bea3a7785793f06cc69ef1487633f6c7ee6df9dac3d7b82f53198fb73d621fb"
+        },
+        {
+          "path": ".chatgpt/production_serve_20260908/retained_c1/completion_0600/receipts.json",
+          "sha256": "d0cfec5915322f8b6eaf9818a0bc7640998fb1ae3c65866d874fc25b25e003d1"
+        },
+        {
+          "path": ".chatgpt/production_serve_20260908/retained_c1/completion_0600/final_margin_combination128.json",
+          "sha256": "0e001355ac461c61a976ad95ece0e72a7223c8f2da582e2b034bba530ee2a8e9"
+        },
+        {
+          "path": ".chatgpt/production_serve_20260908/retained_c1/completion_0600/strict_and_margin_warmup.log",
+          "sha256": "a22da59dc64d538e72dca051ef0ca225bb8cf3db42dc04f6754e6f05554c36a9"
+        }
+      ],
+      "gate_relation": "retained relaxed historical path only; NEVER satisfies owner strict C1 gate",
+      "gate_credit": false,
+      "gate_met": false,
+      "quality_gate": "HARD_FAIL_FOR_UNIVERSAL_C1_DUE_SAME_PROMPT_LONG_THAI_LANGUAGE_SOUP"
+    },
+    {
+      "id": "c1_margin7_current_recert",
+      "title": "Independent 2026-09-08 reproduction of historical C1 margin7 fixture",
+      "must_preserve": true,
+      "historical_reference": {
+        "median_tps": 107.255,
+        "trajectory_matches_historical": true,
+        "stdout_matches_historical": true
+      },
+      "evidence": ".chatgpt/production_serve_20260908/exact107_by_chatgpt/result.json",
+      "evidence_sha256": "dfa4395f8ddd256150eda5763921d9a0721e7195d013db8e86a7f665f1ed58b6",
+      "status": "retained reproduction using preserved direct binary; rebuilt-current-source recert is separate",
+      "gate_relation": "retained relaxed historical path only; NEVER satisfies owner strict C1 gate",
+      "gate_credit": false,
+      "gate_met": false,
+      "quality_gate": "HARD_FAIL_FOR_UNIVERSAL_C1_DUE_SAME_PROMPT_LONG_THAI_LANGUAGE_SOUP"
+    },
+    {
+      "id": "dual_short_margin7",
+      "title": "Accepted dual-short margin7",
+      "must_preserve": true,
+      "historical_reference": {
+        "median_tps": 104.94
+      },
+      "evidence": ".chatgpt/post_reboot_20260821/p0_fz_margin_p0m_joint/promoted_recert/result.json",
+      "evidence_sha256": "2fb84493be0bf1ec1e439dcd686254ea2aa7789461d2ff88ddef3ac7374d3f4c",
+      "status": "retained_evidence; current-runtime recertification is a separate check"
+    },
+    {
+      "id": "dual_short_65k",
+      "title": "Accepted Q64 text short + populated65K dispatch",
+      "must_preserve": true,
+      "historical_reference": {
+        "groups.short.median_tps": 106.01,
+        "groups.65k.median_tps": 110.94
+      },
+      "evidence": ".chatgpt/post_reboot_20260821/p0_q64_retained_local_splits/final_text_matrix/result.json",
+      "evidence_sha256": "018b6d846af6f6fc03b1c1c6ed2f5b9a47590dabf25741fe8083d01dd9a16060",
+      "status": "accepted Q64 evidence; keep distinct from dual-short margin7 and Q45 exact65K"
+    },
+    {
+      "id": "q45_65k_exact107",
+      "title": "Q45 populated65K byte/trajectory-exact path",
+      "must_preserve": true,
+      "historical_reference": {
+        "candidate_tps": 107.77,
+        "baseline_tps": 106.28,
+        "prompt_tokens": 65292,
+        "byte_exact": true,
+        "trajectory_exact": true
+      },
+      "evidence": ".chatgpt/post_reboot_20260821/p0_q45_native_fp16_pv_operands/result65.json",
+      "evidence_sha256": "3f147d83f19ca2d2f86baa754dbbe9225585ab204c8576b6e0d69b941f623bc0",
+      "status": "accepted exact 65K evidence; distinct from faster Q64 65K dispatch"
+    },
+    {
+      "id": "dual_genuine262",
+      "title": "Retained Q64 genuinely populated261900",
+      "must_preserve": true,
+      "historical_reference": {
+        "median_tps": 104.53
+      },
+      "evidence": ".chatgpt/post_reboot_20260821/p0_q64_retained_local_splits/recert262_f8/result.json",
+      "evidence_sha256": "d1ae61bbd6f2376c0ac6a5b973da1ebd4850a9233756d91085e8e4dc4c069e87",
+      "status": "retained_evidence; current-runtime recertification is a separate check"
+    },
+    {
+      "id": "exact_pv_genuine262",
+      "title": "Exact Q45 FP16-staged PV path",
+      "must_preserve": true,
+      "historical_reference": {
+        "candidate.tps": 91.66
+      },
+      "evidence": ".chatgpt/post_reboot_20260821/p0_q45_native_fp16_pv_operands/result262.json",
+      "evidence_sha256": "4f91d45a2dc267ed12aff795a17197cb01b7f7ec51a517dc97214026b8b753d7",
+      "status": "retained_evidence; current-runtime recertification is a separate check"
+    },
+    {
+      "id": "single_multimodal",
+      "title": "Single image/video/mixed accepted profiles",
+      "must_preserve": true,
+      "historical_reference": {
+        "groups.image.median_tps": 108.26,
+        "groups.mixed_url.median_tps": 104.68,
+        "groups.video.median_tps": 105.29
+      },
+      "evidence": ".chatgpt/post_reboot_20260821/p0_q65_q64_multimodal_final/media/single_recert/result.json",
+      "evidence_sha256": "8671849b03a5cc2ada028e44462fe6a3b00863d329b2a018cf9a95579f73fa7e",
+      "status": "retained_evidence; current-runtime recertification is a separate check"
+    },
+    {
+      "id": "dual_multimodal",
+      "title": "Dual image/video/mixed accepted profiles",
+      "must_preserve": true,
+      "historical_reference": {
+        "groups.image.median_tps": 105.26,
+        "groups.mixed_url.median_tps": 101.2,
+        "groups.video.median_tps": 101.99
+      },
+      "evidence": ".chatgpt/post_reboot_20260821/p0_q65_q64_multimodal_final/media/dual_recert/result.json",
+      "evidence_sha256": "2dff096ff5bfdc4512805e465bd31385719c61fca636ba5ebd9bbfa3afe7ac28",
+      "status": "retained_evidence; current-runtime recertification is a separate check"
+    },
+    {
+      "id": "short_media_policy",
+      "title": "Factual media uses qualified naturalD3, not forceD4",
+      "must_preserve": true,
+      "historical_reference": {},
+      "evidence": ".chatgpt/post_reboot_20260821/p0_q67_multimodal_short_policy/result.json",
+      "evidence_sha256": "c052eea81c12761556e96e65742eb460fe1936bb6719245c565b2212d3b41dd4",
+      "status": "retained_evidence; current-runtime recertification is a separate check"
+    },
+    {
+      "id": "physical_c8_first_pass",
+      "title": "First physical C4+C4 >=20/user pass",
+      "must_preserve": true,
+      "historical_reference": {
+        "aggregate_tps": 166.85,
+        "minimum_per_user_tps": 20.32,
+        "classification": "C8_PHYSICAL_20_PASS"
+      },
+      "evidence": ".chatgpt/post_reboot_20260821/p0_q109_physical_c8_proposal_b4/recert/r2/result.json",
+      "evidence_sha256": "556318e173147ec18bb07eecdda6ba83898708661746b5b4e5c5d131c11a865c",
+      "status": "certified historical physical-C8 per-user gate witness"
+    },
+    {
+      "id": "native_c8_clean256",
+      "title": "Clean current physical C4+C4 warm measurement",
+      "must_preserve": true,
+      "historical_reference": {
+        "warm_aggregate_tps": 256.9688967406104,
+        "warm_min_per_user_tps": 26.92134982171538,
+        "classification": "MEASURED_NOT_CERTIFIED"
+      },
+      "evidence": ".chatgpt/production_serve_20260908/decode_architecture/node_c8/result.json",
+      "evidence_sha256": "e67f1ea930ed2e4a6dbb12993373e86af3cd361fa91d2bc18c20036cde140024",
+      "status": "measured frontier; not certification"
+    },
+    {
+      "id": "q5_c8_measured271",
+      "title": "Q5 batch physical-C8 measured frontier",
+      "must_preserve": true,
+      "historical_reference": {
+        "warm_aggregate_tps": 271.159902986682,
+        "warm_min_per_user_tps": 28.887434637602155,
+        "classification": "MEASURED_NOT_CERTIFIED"
+      },
+      "evidence": ".chatgpt/production_serve_20260908/decode_architecture/q5_matrix_dual_1/result.json",
+      "evidence_sha256": "d5108a5bcbdce54d0499cbf34b3d49b0fc2e586bcb5cf1d101c6ec81f0bba549",
+      "additional_evidence": [
+        {
+          "path": ".chatgpt/production_serve_20260908/decode_architecture/q5_qual_repeat_1/result.json",
+          "sha256": "454109f44bfe08b7412320fbcd3d050b51105c52dbb1e8f24e3c60a8f9679c4a"
+        }
+      ],
+      "status": "measured batch-serving win; explicitly not raw-C1 headline credit"
+    },
+    {
+      "id": "native_c8_16k",
+      "title": "Native physicalC4+C4 15.4Kmedia/churn",
+      "must_preserve": true,
+      "historical_reference": {
+        "warm_aggregate_tps": 213.91,
+        "warm_min_per_user_tps": 24.55,
+        "warm_p95_first_content_s": 1.112,
+        "refill_aggregate_tps": 212.99,
+        "refill_min_per_user_tps": 25.35,
+        "refill_p95_first_content_s": 1.083,
+        "cold_p95_ingestion_s": 118.94
+      },
+      "evidence": ".chatgpt/production_serve_20260908/cold_memory/media15k_final/result.json",
+      "evidence_sha256": "de23dc1db2f28b31793054ed160dbc454a0feefe22c3b62c984da9f85a7da643",
+      "status": "retained_evidence; current-runtime recertification is a separate check"
+    },
+    {
+      "id": "native_c8_current",
+      "title": "Current full-target mixed/history/churn",
+      "must_preserve": true,
+      "historical_reference": {
+        "warm_aggregate_tps": 259.4168778526735,
+        "warm_min_per_user_tps": 30.12422477943713,
+        "followup_aggregate_tps": 240.7206272692257,
+        "followup_min_per_user_tps": 26.49723322553044,
+        "refill_aggregate_tps": 248.22977139503683,
+        "refill_min_per_user_tps": 27.42073056107965
+      },
+      "evidence": ".chatgpt/production_serve_20260908/raw_c1/source_final_dual/result.json",
+      "evidence_sha256": "5b3955c4bf331dc982f463b9c4e690442003af5decabcad7cc010e8adfa50fa1",
+      "status": "retained_evidence; current-runtime recertification is a separate check",
+      "additional_evidence": [
+        {
+          "path": ".chatgpt/production_serve_20260908/retained_c1/completion_0600/dual_regression/result.json",
+          "sha256": "f4efc2588d0c935982743c2e0ff1907905ad2856c71c751f3c3a11fde35210ae"
+        }
+      ]
+    },
+    {
+      "id": "strict_c1_full_vocab",
+      "title": "Additional strict full-target C1 control/accelerator",
+      "must_preserve": true,
+      "historical_reference": {
+        "general": [
+          51.2769135238144,
+          57.758373414563025
+        ],
+        "code": [
+          73.63325698797296,
+          82.70484773267175
+        ],
+        "json": [
+          73.37971034573214,
+          82.29866866433278
+        ],
+        "thai": [
+          47.186095141371965,
+          52.46772546187418
+        ],
+        "japanese": [
+          45.70348184892306,
+          51.27738953990514
+        ],
+        "arabic": [
+          46.073305578826975,
+          52.11391289777802
+        ],
+        "all_outputs_same_as_control": true
+      },
+      "evidence": ".chatgpt/production_serve_20260908/raw_c1/full_vocab_comparison.json",
+      "evidence_sha256": "1ce882d27454f6cd75391ef2c0ef2914b7f0b910600f754547229fc07f388d25",
+      "status": "valuable full-target server acceleration; NO owner strict79 headline credit until matching-fixture A/B",
+      "headline_credit": false,
+      "policy_relation": "requires full proposal source + full target; incompatible with historical --lm-head-draft strict79 route as currently implemented",
+      "additional_evidence": [
+        {
+          "path": ".chatgpt/production_serve_20260908/retained_c1/strict_regression.json",
+          "sha256": "6a37c1bd50a57ad92e22742fdc82673c1416367cc29026e8e0adfc04c6e26508"
+        }
+      ]
+    }
+  ],
+  "preserved_binaries": {
+    "ninfer": {
+      "preserved": ".chatgpt/production_serve_20260908/retained_c1/ninfer.retained-before",
+      "sha256": "6875163c350248606501b84e3a3075c535928da1813376d3084ae34476070d13"
+    },
+    "ninfer-serve": {
+      "preserved": ".chatgpt/production_serve_20260908/retained_c1/ninfer-serve.retained-before",
+      "sha256": "15046858ce2b439e61d6b4197dc8afb8b96f4b689192b80afd61556d89d63496"
+    },
+    "ninfer-dual": {
+      "preserved": ".chatgpt/production_serve_20260908/retained_c1/ninfer-dual.retained-before",
+      "sha256": "41e8a52fac9d694a6c35faeb65b4a61fefe412d8544a3d66017a178aa718a4ee"
+    }
+  },
+  "terminology": {
+    "strict": "NInfer strict speculative acceptance control; does not imply universal external-upstream bit identity",
+    "margin7": "owner-accepted relaxed same-same MTP C1 policy with greedy logit margin 7",
+    "headline_credit_rule": "different fixtures/policies/concurrency do not replace one another"
+  },
+  "hard_gates": {
+    "single_certified_tps": 80.0,
+    "dual_short_tps": 100.0,
+    "populated_65k_tps": 100.0,
+    "genuine_262k_tps": 100.0,
+    "physical_c8_aggregate_tps": 160.0,
+    "physical_c8_min_per_user_tps": 20.0,
+    "c1_strict_useful_tps": 100.0,
+    "c1_draft_tokens": 3,
+    "c1_greedy_margin_delta": -1.0,
+    "c1_language_soup": "HARD_FAIL",
+    "c1_semantic_drift": "HARD_FAIL",
+    "c1_relaxed_policy_may_satisfy_gate": false
+  },
+  "owner_headlines": {
+    "c1_strict_current_p0m_tps": 79.01,
+    "c1_legacy_certified_single80_tps": 80.185,
+    "c1_margin7_tps": 107.27,
+    "dual_short_margin7_tps": 104.94,
+    "q64_short_tps": 106.01,
+    "q45_65k_exact_tps": 107.77,
+    "q64_65k_tps": 110.94,
+    "genuine_262k_tps": 104.53,
+    "single_multimodal": {
+      "image": 108.26,
+      "mixed_url": 104.68,
+      "video": 105.29
+    },
+    "dual_multimodal": {
+      "image": 105.26,
+      "mixed_url": 101.2,
+      "video": 101.99
+    },
+    "first_physical_c8": {
+      "aggregate": 166.85,
+      "minimum_per_user": 20.32
+    },
+    "current_clean_c8_measured": {
+      "aggregate": 256.9688967406104,
+      "minimum_per_user": 26.92134982171538
+    },
+    "q5_c8_measured": {
+      "aggregate": 271.159902986682,
+      "minimum_per_user": 28.887434637602155
+    },
+    "same_source_c8_measured": {
+      "warm_aggregate": 259.4168778526735,
+      "warm_min": 30.12422477943713,
+      "followup_aggregate": 240.7206272692257,
+      "followup_min": 26.49723322553044,
+      "refill_aggregate": 248.22977139503683,
+      "refill_min": 27.42073056107965
+    },
+    "c1_current_source_strict_fixture_tps": 80.51,
+    "c1_margin7_gate_credit": false,
+    "c1_required_strict_tps": 100.0
+  },
+  "retained_relaxed_c1": {
+    "draft_tokens": 3,
+    "greedy_margin_delta": 7.0,
+    "proposal_head": "optimized",
+    "historical_reference_tps": 107.27,
+    "current_source_reference_tps": 107.35,
+    "gate_credit": false,
+    "gate_status": "NON_GATING_HARD_QUALITY_FAIL_FOR_UNIVERSAL_C1",
+    "reason": "Same-prompt 768-token Thai stress produces severe language soup under margin7 while strict stays overwhelmingly Thai. Preserve the route/evidence but do not use it to satisfy owner C1 gates."
+  }
+}
