@@ -1,0 +1,16 @@
+{
+  "snapshot_date": "2026-11-21",
+  "original_branch": "feat/rtx2080ti-sm75",
+  "source_head": "b6c36cfac2480c9636586c7be737939b62126bd0",
+  "tracked": 995,
+  "untracked_source": 13,
+  "published_code_paths": 1004,
+  "notes": 7,
+  "sanitized_paths": [
+    "examples/cli/messages/long_niah_128k.json",
+    "examples/cli/messages/long_niah_256k.json",
+    "examples/cli/messages/long_niah_64k.json",
+    "progress.md",
+    "third_party/cpp-httplib/httplib.h"
+  ]
+}
